@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@php($enableDataTables = true)
 
 @section('content')
 <div class="d-flex justify-content-between mb-3"><h1 class="h4">Reports</h1></div>

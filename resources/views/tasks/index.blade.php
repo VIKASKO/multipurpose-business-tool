@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@php($enableDataTables = true)
 @section('content')
 <div class="d-flex justify-content-between mb-3"><h1 class="h4">Tasks</h1><a href="{{ route('tasks.create') }}" class="btn btn-primary btn-sm">Add Task</a></div>
 <form method="GET" class="mb-3"><div class="input-group"><select class="form-select form-select-sm" name="status"><option value="">All Statuses</option>@foreach(['Pending','In Progress','Completed'] as $status)<option value="{{ $status }}" @selected(request('status')===$status)>{{ $status }}</option>@endforeach</select><button class="btn btn-sm btn-outline-primary">Filter</button></div></form>

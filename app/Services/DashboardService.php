@@ -29,11 +29,21 @@ class DashboardService
         $totalIncome = (float) $incomeQuery->sum('amount');
         $totalExpenses = (float) $expenseQuery->sum('amount');
 
+        $accounts = $accountsQuery
+            ->withSum('incomes', 'amount')
+            ->withSum('expenses', 'amount')
+            ->get();
+
         return [
             'total_income' => $totalIncome,
             'total_expenses' => $totalExpenses,
             'net_profit' => $totalIncome - $totalExpenses,
-            'account_balances' => $accountsQuery->get()->mapWithKeys(fn (Account $account) => [$account->account_name => $account->balance]),
+            'account_balances' => $accounts->mapWithKeys(function (Account $account) {
+                $income = (float) ($account->incomes_sum_amount ?? 0);
+                $expense = (float) ($account->expenses_sum_amount ?? 0);
+
+                return [$account->account_name => $income - $expense];
+            }),
             'total_customers' => Customer::when($businessId, fn ($q) => $q->where('business_id', $businessId))->count(),
             'new_customers_this_month' => Customer::when($businessId, fn ($q) => $q->where('business_id', $businessId))
                 ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->count(),

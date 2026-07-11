@@ -29,13 +29,17 @@ class ReportController extends Controller
         $totalIncome = (float) $incomeQuery->sum('amount');
         $totalExpense = (float) $expenseQuery->sum('amount');
 
+        $orders = Order::query()
+            ->whereBetween('order_date', [$from, $to])
+            ->get(['status', 'order_date', 'total_amount']);
+
         return view('reports.index', [
             'from' => $from,
             'to' => $to,
             'sources' => IncomeSource::orderBy('source_name')->get(),
             'categories' => ExpenseCategory::orderBy('category_name')->get(),
-            'ordersByStatus' => Order::all()->groupBy('status')->map->count(),
-            'monthlyRevenue' => Order::all()
+            'ordersByStatus' => $orders->groupBy('status')->map->count(),
+            'monthlyRevenue' => $orders
                 ->groupBy(fn (Order $order) => optional($order->order_date)->format('Y-m'))
                 ->map(fn ($orders) => $orders->sum('total_amount'))
                 ->sortKeys(),

@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@php($enableDataTables = true)
 @section('content')
 <div class="d-flex justify-content-between mb-3"><h1 class="h4">Incomes</h1><a href="{{ route('incomes.create') }}" class="btn btn-primary btn-sm">Add Income</a></div>
 <form method="GET" class="row g-2 mb-3"><div class="col-md-3"><input type="date" class="form-control form-control-sm" name="from" value="{{ request('from') }}"></div><div class="col-md-3"><input type="date" class="form-control form-control-sm" name="to" value="{{ request('to') }}"></div><div class="col-md-3"><select class="form-select form-select-sm" name="source_id"><option value="">All Sources</option>@foreach($sources as $source)<option value="{{ $source->id }}" @selected((int)request('source_id')===$source->id)>{{ $source->source_name }}</option>@endforeach</select></div><div class="col-md-3"><button class="btn btn-sm btn-outline-primary">Filter</button></div></form>

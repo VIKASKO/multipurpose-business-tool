@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@php($enableDataTables = true)
 @section('content')
 <div class="d-flex justify-content-between mb-3"><h1 class="h4">Customers</h1><a href="{{ route('customers.create') }}" class="btn btn-primary btn-sm">Add Customer</a></div>
 <form method="GET" class="mb-3"><div class="input-group"><input class="form-control form-control-sm" placeholder="Search name/mobile/email" name="search" value="{{ request('search') }}"><button class="btn btn-sm btn-outline-primary">Search</button></div></form>
