@@ -1,0 +1,7 @@
+@extends('layouts.app')
+@php($enableDataTables = true)
+@section('content')
+<div class="d-flex justify-content-between mb-3"><h1 class="h4">Tasks</h1><a href="{{ route('tasks.create') }}" class="btn btn-primary btn-sm">Add Task</a></div>
+<form method="GET" class="mb-3"><div class="input-group"><select class="form-select form-select-sm" name="status"><option value="">All Statuses</option>@foreach(['Pending','In Progress','Completed'] as $status)<option value="{{ $status }}" @selected(request('status')===$status)>{{ $status }}</option>@endforeach</select><button class="btn btn-sm btn-outline-primary">Filter</button></div></form>
+<div class="table-responsive"><table class="table table-striped"><thead><tr><th>Task</th><th>Project</th><th>Priority</th><th>Status</th><th>Due</th><th></th></tr></thead><tbody>@foreach($items as $item)<tr><td>{{ $item->task_name }}</td><td>{{ $item->project->project_name }}</td><td>{{ $item->priority }}</td><td>{{ $item->status }}</td><td>{{ optional($item->due_date)->format('Y-m-d') }}</td><td class="text-end"><a href="{{ route('tasks.edit',$item) }}" class="btn btn-sm btn-outline-secondary">Edit</a><form method="POST" action="{{ route('tasks.destroy',$item) }}" class="d-inline" data-confirm="Delete this task?">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>@endforeach</tbody></table></div>{{ $items->links() }}
+@endsection
