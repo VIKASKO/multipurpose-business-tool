@@ -1,0 +1,35 @@
+name: Deploy Laravel App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 65002
+
+          script: |
+            cd /home/u772638765/domains/olive-stinkbug-485761.hostingersite.com/public_html
+
+            # Force sync with GitHub (explicitly set remote URL to avoid stale/misconfigured origin)
+            git remote set-url origin https://${{ secrets.DEPLOY_TOKEN }}@github.com/VIKASKO/multipurpose-business-tool.git
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
+
+            # Install/update dependencies
+            composer install --no-interaction --prefer-dist --optimize-autoloader
+
+            # Laravel optimizations (no DB changes)
+            php artisan config:cache
+            php artisan queue:restart
