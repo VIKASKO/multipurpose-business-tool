@@ -30,8 +30,32 @@ jobs:
             # Install/update dependencies
             composer install --no-interaction --prefer-dist --optimize-autoloader
 
-            # Ensure environment file and app key
-            cp .env.example .env || true
+            # Create .env from GitHub Secrets if provided, else fall back to example
+            if [ -n "${{ secrets.DB_DATABASE }}" ]; then
+              cat > .env <<EOT
+APP_NAME=${{ secrets.APP_NAME }}
+APP_ENV=${{ secrets.APP_ENV }}
+APP_KEY=${{ secrets.APP_KEY }}
+APP_DEBUG=${{ secrets.APP_DEBUG }}
+APP_URL=${{ secrets.APP_URL }}
+
+DB_CONNECTION=${{ secrets.DB_CONNECTION }}
+DB_HOST=${{ secrets.DB_HOST }}
+DB_PORT=${{ secrets.DB_PORT }}
+DB_DATABASE=${{ secrets.DB_DATABASE }}
+DB_USERNAME=${{ secrets.DB_USERNAME }}
+DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+QUEUE_CONNECTION=database
+SESSION_DRIVER=file
+EOT
+            else
+              cp .env.example .env || true
+            fi
+
+            # Ensure APP_KEY is present
             php artisan key:generate --force || true
 
             # Ensure writable directories
