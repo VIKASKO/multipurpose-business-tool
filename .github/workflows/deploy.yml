@@ -30,6 +30,13 @@ jobs:
             # Install/update dependencies
             composer install --no-interaction --prefer-dist --optimize-autoloader
 
+            # Ensure environment file and app key
+            cp .env.example .env || true
+            php artisan key:generate --force || true
+
+            # Ensure writable directories
+            chmod -R 775 storage bootstrap/cache || true
+
             # Laravel optimizations (no DB changes)
             php artisan config:cache
             php artisan queue:restart
