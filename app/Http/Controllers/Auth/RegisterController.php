@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 
 class RegisterController extends Controller
@@ -35,8 +36,15 @@ class RegisterController extends Controller
             'is_active' => true,
         ]);
 
-        // Generate and send OTP
-        $this->sendOtp($user->email);
+        // Generate and send OTP (don't fail registration if OTP sending errors)
+        try {
+            $this->sendOtp($user->email);
+        } catch (\Throwable $e) {
+            Log::error('Failed to send registration OTP: '.$e->getMessage());
+            // proceed — user created but OTP may not be sent
+            return redirect()->route('auth.otp.show')
+                ->with('warning', 'Account created but we could not send an OTP. Contact support.');
+        }
 
         // Store email in session for the verify step
         session(['pending_verification_email' => $user->email]);

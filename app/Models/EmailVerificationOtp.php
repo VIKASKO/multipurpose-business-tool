@@ -12,10 +12,7 @@ class EmailVerificationOtp extends Model
         'expires_at',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'expires_at' => 'datetime',
-        ];
-    }
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
 }

@@ -21,13 +21,10 @@ class Income extends Model
         'notes',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'date' => 'date',
-            'amount' => 'decimal:2',
-        ];
-    }
+    protected $casts = [
+        'date' => 'date',
+        'amount' => 'decimal:2',
+    ];
 
     public function business(): BelongsTo
     {

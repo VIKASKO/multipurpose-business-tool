@@ -23,13 +23,10 @@ class Task extends Model
         'completed_at',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'due_date' => 'date',
-            'completed_at' => 'datetime',
-        ];
-    }
+    protected $casts = [
+        'due_date' => 'date',
+        'completed_at' => 'datetime',
+    ];
 
     public function business(): BelongsTo
     {

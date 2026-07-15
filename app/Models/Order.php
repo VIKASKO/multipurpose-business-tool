@@ -24,16 +24,13 @@ class Order extends Model
         'notes',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'order_date' => 'date',
-            'delivery_date' => 'date',
-            'total_amount' => 'decimal:2',
-            'advance_amount' => 'decimal:2',
-            'balance_amount' => 'decimal:2',
-        ];
-    }
+    protected $casts = [
+        'order_date' => 'date',
+        'delivery_date' => 'date',
+        'total_amount' => 'decimal:2',
+        'advance_amount' => 'decimal:2',
+        'balance_amount' => 'decimal:2',
+    ];
 
     public function business(): BelongsTo
     {

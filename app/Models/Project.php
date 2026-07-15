@@ -24,14 +24,11 @@ class Project extends Model
         'notes',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'start_date' => 'date',
-            'end_date' => 'date',
-            'project_value' => 'decimal:2',
-        ];
-    }
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'project_value' => 'decimal:2',
+    ];
 
     public function business(): BelongsTo
     {
