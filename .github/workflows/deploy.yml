@@ -32,25 +32,23 @@ jobs:
 
             # Create .env from GitHub Secrets if provided, else fall back to example
             if [ -n "${{ secrets.DB_DATABASE }}" ]; then
-              cat > .env <<EOT
-APP_NAME=${{ secrets.APP_NAME }}
-APP_ENV=${{ secrets.APP_ENV }}
-APP_KEY=${{ secrets.APP_KEY }}
-APP_DEBUG=${{ secrets.APP_DEBUG }}
-APP_URL=${{ secrets.APP_URL }}
-
-DB_CONNECTION=${{ secrets.DB_CONNECTION }}
-DB_HOST=${{ secrets.DB_HOST }}
-DB_PORT=${{ secrets.DB_PORT }}
-DB_DATABASE=${{ secrets.DB_DATABASE }}
-DB_USERNAME=${{ secrets.DB_USERNAME }}
-DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-
-BROADCAST_DRIVER=log
-CACHE_DRIVER=file
-QUEUE_CONNECTION=database
-SESSION_DRIVER=file
-EOT
+              echo "APP_NAME=${{ secrets.APP_NAME }}" > .env
+              echo "APP_ENV=${{ secrets.APP_ENV }}" >> .env
+              echo "APP_KEY=${{ secrets.APP_KEY }}" >> .env
+              echo "APP_DEBUG=${{ secrets.APP_DEBUG }}" >> .env
+              echo "APP_URL=${{ secrets.APP_URL }}" >> .env
+              echo "" >> .env
+              echo "DB_CONNECTION=${{ secrets.DB_CONNECTION }}" >> .env
+              echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+              echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+              echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
+              echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+              echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+              echo "" >> .env
+              echo "BROADCAST_DRIVER=log" >> .env
+              echo "CACHE_DRIVER=file" >> .env
+              echo "QUEUE_CONNECTION=database" >> .env
+              echo "SESSION_DRIVER=file" >> .env
             else
               cp .env.example .env || true
             fi
