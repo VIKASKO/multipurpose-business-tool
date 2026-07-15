@@ -28,8 +28,8 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
 
-            # Remove untracked files
-            git clean -fd
+            # Remove untracked files except for critical Laravel directories and .env
+            git clean -fd -e .env -e storage -e bootstrap/cache -e vendor
 
             # Install dependencies
             composer install \
