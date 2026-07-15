@@ -21,44 +21,33 @@ jobs:
           script: |
             cd /home/u772638765/domains/olive-stinkbug-485761.hostingersite.com/public_html
 
-            # Force sync with GitHub (explicitly set remote URL to avoid stale/misconfigured origin)
+            # Ensure correct repository
             git remote set-url origin https://${{ secrets.DEPLOY_TOKEN }}@github.com/VIKASKO/multipurpose-business-tool.git
+
+            # Pull latest code
             git fetch origin main
             git reset --hard origin/main
+
+            # Remove untracked files
             git clean -fd
 
-            # Install/update dependencies
-            composer install --no-interaction --prefer-dist --optimize-autoloader
+            # Install dependencies
+            composer install \
+              --no-dev \
+              --no-interaction \
+              --prefer-dist \
+              --optimize-autoloader
 
-            # Create .env from GitHub Secrets if provided, else fall back to example
-            if [ -n "${{ secrets.DB_DATABASE }}" ]; then
-              echo "APP_NAME=${{ secrets.APP_NAME }}" > .env
-              echo "APP_ENV=${{ secrets.APP_ENV }}" >> .env
-              echo "APP_KEY=${{ secrets.APP_KEY }}" >> .env
-              echo "APP_DEBUG=${{ secrets.APP_DEBUG }}" >> .env
-              echo "APP_URL=${{ secrets.APP_URL }}" >> .env
-              echo "" >> .env
-              echo "DB_CONNECTION=${{ secrets.DB_CONNECTION }}" >> .env
-              echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-              echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-              echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
-              echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-              echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-              echo "" >> .env
-              echo "BROADCAST_DRIVER=log" >> .env
-              echo "CACHE_DRIVER=file" >> .env
-              echo "QUEUE_CONNECTION=database" >> .env
-              echo "SESSION_DRIVER=file" >> .env
-            else
-              cp .env.example .env || true
-            fi
-
-            # Ensure APP_KEY is present
-            php artisan key:generate --force || true
-
-            # Ensure writable directories
+            # Ensure required directories are writable
             chmod -R 775 storage bootstrap/cache || true
 
-            # Laravel optimizations (no DB changes)
+            # Clear old caches
+            php artisan optimize:clear
+
+            # Rebuild caches
             php artisan config:cache
-            php artisan queue:restart
+            php artisan route:cache
+            php artisan view:cache
+
+            # Restart queue workers only if using queues
+            php artisan queue:restart || true
